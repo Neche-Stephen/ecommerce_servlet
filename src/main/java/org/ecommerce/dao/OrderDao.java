@@ -4,10 +4,7 @@ package org.ecommerce.dao;
 import org.ecommerce.model.Order;
 import org.ecommerce.model.Product;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.*;
 
 public class OrderDao {
@@ -43,21 +40,22 @@ public class OrderDao {
     public List<Order> userOrders(int id) {
         List<Order> list = new ArrayList<>();
         try {
-            query = "select * from orders where u_id=? order by orders.o_id desc";
-            pst = this.con.prepareStatement(query);
+            query = "select * from orders where userId=? order by orders.orderId desc";
+            pst = con.prepareStatement(query);
             pst.setInt(1, id);
             rs = pst.executeQuery();
             while (rs.next()) {
                 Order order = new Order();
                 ProductDao productDao = new ProductDao(this.con);
-                int pId = rs.getInt("p_id");
+                int pId = rs.getInt("productId");
                 Product product = productDao.getSingleProduct(pId);
-                order.setOrderId(rs.getInt("o_id"));
+                order.setOrderId(rs.getInt("orderId"));
                 order.setId(pId);
                 order.setName(product.getName());
                 order.setCategory(product.getCategory());
-                order.setPrice(product.getPrice()*rs.getInt("o_quantity"));
-                order.setQuantity(rs.getInt("o_quantity"));
+                order.setPrice(product.getPrice()*rs.getInt("quantity"));
+                order.setQuantity(rs.getInt("quantity"));
+                order.setCreatedAt(Timestamp.valueOf(rs.getString("createdAt")));
                 list.add(order);
             }
         } catch (Exception e) {
@@ -70,8 +68,8 @@ public class OrderDao {
     public void cancelOrder(int id) {
         //boolean result = false;
         try {
-            query = "delete from orders where o_id=?";
-            pst = this.con.prepareStatement(query);
+            query = "delete from orders where orderId=?";
+            pst = con.prepareStatement(query);
             pst.setInt(1, id);
             pst.execute();
             //result = true;

@@ -22,7 +22,7 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            out.println("Login servlethoo");
+//            out.println("Login servlethoo");
             String email = request.getParameter("login-email");
             String password = request.getParameter("login-password");
 
@@ -33,7 +33,7 @@ public class LoginServlet extends HttpServlet {
 //				System.out.print("user logged in");
                 response.sendRedirect("index.jsp");
             } else {
-                out.println("there is no user");
+                out.println("User doesnt exist or Wrong details");
             }
 
         }
